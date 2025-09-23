@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import { ThemedImage } from './themed-image';
+import { Logo } from './logo';
+import { ArrowUpRight } from 'lucide-react';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -9,16 +11,8 @@ const Footer = () => {
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
-            <Link href="#">
-              <ThemedImage
-                lightSrc="/glimvia-logo-dark.svg"
-                darkSrc="/glimvia-logo-light.svg"
-                alt="Glimvia Logo"
-                width={100}
-                height={25}
-              />
-            </Link>
-            <p className="mt-4 text-sm text-muted-foreground max-w-[200px]">
+            <Logo />
+            <p className="mt-4 text-sm text-muted-foreground max-w-[120px]">
               Your dashboards, KPIs and alerts now live in your pocket.
             </p>
           </div>
@@ -28,7 +22,12 @@ const Footer = () => {
               <li><Link href="#features" className="text-sm text-muted-foreground hover:text-foreground">Features</Link></li>
               <li><Link href="#experience" className="text-sm text-muted-foreground hover:text-foreground">Experience</Link></li>
               <li><Link href="#coming-soon" className="text-sm text-muted-foreground hover:text-foreground">Roadmap</Link></li>
-              <li><Link href="#" className="text-sm text-muted-foreground hover:text-foreground">Tech Specs</Link></li>
+              <li>
+                <Link href="#" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                  Tech Specs
+                  <ArrowUpRight className="h-3 w-3" />
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
@@ -43,7 +42,12 @@ const Footer = () => {
             <h3 className="text-sm font-semibold leading-6 text-foreground">Company</h3>
             <ul role="list" className="mt-4 space-y-2">
               <li><Link href="#about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
-              <li><a href="https://woodfrog.tech/" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">Woodfrog Tech</a></li>
+              <li>
+                <a href="https://woodfrog.tech/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                  Woodfrog Tech
+                  <ArrowUpRight className="h-3 w-3" />
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -78,8 +82,11 @@ const Footer = () => {
             </div>
         </div>
 
-        <div className="mt-8 border-t pt-8 flex flex-col-reverse md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground">&copy; {currentYear} Glimvia. All rights reserved. ❤️ Made with care.</p>
+        <div className="mt-8 border-t pt-8 flex flex-col-reverse items-center gap-4 md:flex-row md:justify-between">
+          <p className="text-xs text-muted-foreground">&copy; {currentYear} Glimvia. All rights reserved.</p>
+          <a href="https://woodfrog.tech/" target="_blank" rel="noopener noreferrer" className="group text-xs text-muted-foreground hover:text-foreground flex items-center gap-1">
+            Crafted with <span className="text-gray-400 group-hover:text-red-500 group-hover:scale-125 transition-all">❤️</span> by team Woodfrog
+          </a>
           <div className="flex space-x-4">
             <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">Privacy Notice</Link>
             <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">Terms & Conditions</Link>

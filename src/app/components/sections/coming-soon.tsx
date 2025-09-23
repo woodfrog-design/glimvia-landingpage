@@ -1,9 +1,10 @@
 "use client";
 import { motion } from 'framer-motion';
-import { ArrowRight, Settings, BarChart3, Bell, Tablet, Users, BotMessageSquare } from 'lucide-react';
+import { Settings, BarChart3, Bell, Tablet, Users, BotMessageSquare } from 'lucide-react';
 import { AnimatedSection } from "../animated-section";
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { SectionHeader } from '../section-header';
 
 const upcomingFeatures = [
     { 
@@ -43,18 +44,18 @@ const upcomingFeatures = [
     },
     { 
         title: "Team Collaboration", 
-        description: "Share and discuss insights with your team seamlessly.", 
+        description: "Share and discuss insights with your team directly in the app.", 
         status: "In Progress", 
-        icon: Users,
-        color: "hsl(var(--primary))"
+        icon: Users, 
+        color: "hsl(var(--primary))" 
     },
 ];
 
-const statusStyles: {[key: string]: string} = {
-    "In Progress": "border-primary/50 bg-primary/10 text-primary",
-    "In Planning": "border-accent/50 bg-accent/10 text-accent",
-    "Next Up": "border-green-500/50 bg-green-500/10 text-green-400",
-}
+const statusStyles: { [key: string]: string } = {
+    "In Progress": "border-primary/50 text-primary",
+    "Next Up": "border-teal-500/50 text-teal-500",
+    "In Planning": "border-amber-500/50 text-amber-500",
+};
 
 export default function ComingSoon() {
   const containerVariants = {
@@ -68,26 +69,16 @@ export default function ComingSoon() {
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-      },
-    },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
-    <AnimatedSection id="coming-soon" className="py-24 sm:py-32 bg-secondary/50 dark:bg-secondary/20">
+    <AnimatedSection id="coming-soon" className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl font-headline">
-            Always Evolving
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-muted-foreground">
-            We're constantly working to make Glimvia more powerful. Here's a sneak peek at what's on our roadmap, inspired by the tools you love.
-          </p>
-        </div>
+        <SectionHeader
+          title="What's Next for Glimvia?"
+          description="We are constantly working on new features and improvements. Here's a sneak peek at what's on our roadmap, inspired by the tools you love."
+        />
         <motion.div 
           className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
           variants={containerVariants}
@@ -96,11 +87,15 @@ export default function ComingSoon() {
           viewport={{ once: true, amount: 0.2 }}
         >
           {upcomingFeatures.map((feature, index) => (
-            <motion.div key={index} variants={itemVariants}>
-              <div className="group relative flex flex-col h-full rounded-2xl border bg-background p-6 shadow-sm transition-all duration-300 hover:border-primary/50 hover:shadow-lg hover:-translate-y-1">
+            <motion.div 
+              key={index} 
+              variants={itemVariants} 
+            >
+              <div className="flex flex-col h-full rounded-2xl border bg-background p-6 transition-all duration-300 shadow-feature-card hover:shadow-feature-card-hover hover:-translate-y-1">
                 <div className="flex items-center justify-between mb-4">
-                    <div className="p-2 rounded-full bg-muted" style={{ border: `1px solid ${feature.color}` }}>
-                        <feature.icon className="h-6 w-6" style={{ color: feature.color }} />
+                    {/* The "group" class is now on the icon's container for precise hovering */}
+                    <div className="group p-2 rounded-full bg-muted transition-all duration-300 group-hover:scale-110 group-hover:[box-shadow:0_0_20px_4px_hsl(var(--teal)/0.4)]" style={{ border: `1px solid ${feature.color}` }}>
+                        <feature.icon className="h-6 w-6 transition-transform duration-300 group-hover:scale-125" style={{ color: feature.color }} />
                     </div>
                     <Badge variant="outline" className={cn("text-xs", statusStyles[feature.status])}>
                         {feature.status}

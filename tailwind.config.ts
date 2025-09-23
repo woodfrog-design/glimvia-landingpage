@@ -72,11 +72,19 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        teal: {
+          DEFAULT: "hsl(var(--teal))",
+          foreground: "hsl(var(--teal-foreground))",
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+      },
+      boxShadow: { // Add this section
+        'feature-card': '0 10px 30px -15px hsl(var(--shadow-color) / 0.3)',
+        'feature-card-hover': '0 10px 25px -10px hsl(var(--shadow-color) / 0.5)',
       },
       keyframes: {
         'accordion-down': {
