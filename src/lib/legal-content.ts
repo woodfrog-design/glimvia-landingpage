@@ -1,0 +1,155 @@
+// Defines the structure for our legal content
+export type LegalContentItem = {
+  type: 'h2' | 'h3' | 'p' | 'ul' | 'contact';
+  content: string | string[];
+};
+
+// --- Privacy Policy Content ---
+export const privacyContent: LegalContentItem[] = [
+  { type: 'h2', content: 'Overview' },
+  { type: 'p', content: 'Glimvia ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application and related services.' },
+  { type: 'p', content: 'Glimvia is an independent mobile client for Apache Superset that allows you to access your dashboards and data insights on mobile devices. We are not affiliated with the Apache Superset project.' },
+  { type: 'h2', content: 'Information We Collect' },
+  { type: 'h3', content: 'Information You Provide' },
+  { type: 'ul', content: [
+    'Account Credentials: To connect to your Apache Superset instance, we collect and securely store your Superset URL, username, and password/authentication token on your device.',
+    'Contact Information: When you contact us for support or other inquiries, we collect your name, email address, and the content of your message.',
+  ]},
+  { type: 'h3', content: 'Information We Collect Automatically' },
+  { type: 'ul', content: [
+    'Usage Data: We collect anonymous data about your interaction with the App, such as features used, session duration, and crash reports. This helps us improve app performance and user experience.',
+    'Device Information: We collect basic information about your mobile device, including device model, operating system version, and unique device identifiers for analytics and troubleshooting.',
+  ]},
+  { type: 'h3', content: 'Information from Third Parties' },
+  { type: 'ul', content: [
+    'Superset Data: The App displays data from your connected Apache Superset instance. We do not store your dashboard data on our servers; it is cached securely on your device for performance and offline access.',
+  ]},
+  { type: 'h2', content: 'How We Use Your Information' },
+  { type: 'p', content: 'We use the information we collect to:' },
+  { type: 'ul', content: [
+    'Provide, operate, and maintain the App',
+    'Improve, personalize, and expand our services',
+    'Understand and analyze how you use the App',
+    'Develop new products, services, features, and functionality',
+    'Communicate with you for customer service and support',
+    'Send you push notifications (if enabled)',
+    'Prevent fraud and ensure security',
+  ]},
+  { type: 'h2', content: 'Data Sharing and Disclosure' },
+  { type: 'p', content: 'We do not sell, trade, or rent your personal information. We may share information with third parties under the following circumstances:' },
+  { type: 'ul', content: [
+    'With Service Providers: We may share data with third-party vendors that perform services for us, such as analytics or crash reporting, under strict confidentiality agreements.',
+    'For Legal Reasons: We may disclose your information if required by law or in response to valid requests by public authorities.',
+  ]},
+  { type: 'h2', content: 'Data Security' },
+  { type: 'p', content: 'We use administrative, technical, and physical security measures to protect your information. Your Superset credentials are encrypted and stored only on your device. While we have taken reasonable steps to secure your data, no security system is impenetrable.' },
+  { type: 'h2', content: 'Data Retention' },
+  { type: 'p', content: 'We retain your personal information only for as long as necessary to provide you with our services and as described in this Privacy Policy. Cached Superset data is periodically refreshed and old data is removed from your device.' },
+  { type: 'h2', content: 'International Data Transfers' },
+  { type: 'p', content: 'Your information may be transferred to — and maintained on — computers located outside of your state, province, country, or other governmental jurisdiction. We will take all steps reasonably necessary to ensure that your data is treated securely and in accordance with appropriate safeguards such as standard contractual clauses and adequacy decisions.' },
+  { type: 'h2', content: 'Changes to This Policy' },
+  { type: 'p', content: 'We may update this Privacy Policy periodically. We will notify you of significant changes through the app or by email. Your continued use of Glimvia after changes constitutes acceptance of the updated policy.' },
+  { type: 'h2', content: 'Contact Us' },
+  { type: 'p', content: 'If you have questions about this Privacy Policy or our data practices, please contact us:' },
+  { type: 'contact', content: 'hello@glimvia.app'},
+];
+
+// --- Terms & Conditions Content ---
+export const termsContent: LegalContentItem[] = [
+  { type: 'h2', content: 'Agreement to Terms' },
+  { type: 'p', content: 'By accessing and using Glimvia ("the App," "we," "our," or "us"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.' },
+  { type: 'p', content: 'Glimvia is an independent mobile application that provides access to Apache Superset instances. We are not affiliated with, endorsed by, or sponsored by the Apache Superset project or the Apache Software Foundation.' },
+  { type: 'h2', content: 'Service Description' },
+  { type: 'p', content: 'Glimvia provides:' },
+  { type: 'ul', content: [
+    'Mobile access to Apache Superset dashboards and visualizations',
+    'Data synchronization and caching for improved performance',
+    'Push notifications for dashboard alerts (where supported)',
+    'Offline viewing capabilities for cached content',
+  ]},
+  { type: 'h2', content: 'User Responsibilities' },
+  { type: 'h3', content: 'Account Security' },
+  { type: 'ul', content: [
+    'You are responsible for maintaining the confidentiality of your Superset login credentials',
+    'You must notify us immediately of any unauthorized use of your account',
+    'You agree to provide accurate and current information',
+  ]},
+  { type: 'h3', content: 'Acceptable Use' },
+  { type: 'ul', content: [
+    'Use the App only for lawful purposes and in accordance with these Terms',
+    'Do not attempt to reverse engineer, decompile, or hack the App',
+    'Do not use automated systems to access the App',
+    'Do not share your account credentials with unauthorized persons',
+    'Respect the data governance policies of your Superset instance',
+  ]},
+  { type: 'h2', content: 'Data and Privacy' },
+  { type: 'ul', content: [
+    'You retain ownership of your data accessed through Superset',
+    'We temporarily cache your dashboard data to improve app performance',
+    'Your data is encrypted and stored securely according to our Privacy Policy',
+    'You are responsible for ensuring you have authorization to access your Superset data',
+    'We are not responsible for data loss or corruption in your Superset instance',
+  ]},
+  { type: 'h2', content: 'Third-Party Services' },
+  { type: 'p', content: 'Glimvia integrates with Apache Superset and other third-party services:' },
+  { type: 'ul', content: [
+    'Your use of Apache Superset is governed by its own terms and licenses',
+    'We are not responsible for the availability or functionality of third-party services',
+    'Third-party service outages may affect Glimvia functionality',
+    'You must comply with the terms of service for all connected platforms',
+  ]},
+  { type: 'h2', content: 'Service Availability' },
+  { type: 'ul', content: [
+    'We strive for high availability but cannot guarantee 100% uptime',
+    'Scheduled maintenance will be announced in advance when possible',
+    'We reserve the right to modify or discontinue features with notice',
+    'Emergency maintenance may occur without advance notice',
+  ]},
+  { type: 'h2', content: 'Intellectual Property' },
+  { type: 'ul', content: [
+    'Glimvia and its original content are protected by copyright and trademark laws',
+    'You may not reproduce, distribute, or create derivative works without permission',
+    'Apache Superset is licensed under the Apache License 2.0',
+    'Third-party libraries and components retain their respective licenses',
+  ]},
+  { type: 'h2', content: 'Limitation of Liability' },
+  { type: 'p', content: 'TO THE FULLEST EXTENT PERMITTED BY LAW:' },
+  { type: 'ul', content: [
+    'GLIMVIA IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND',
+    'WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, OR CONSEQUENTIAL DAMAGES',
+    'OUR TOTAL LIABILITY SHALL NOT EXCEED THE AMOUNT PAID BY YOU (IF ANY) FOR THE SERVICE',
+    'WE ARE NOT LIABLE FOR DATA LOSS, BUSINESS INTERRUPTION, OR SECURITY BREACHES IN YOUR SUPERSET INSTANCE',
+  ]},
+  { type: 'h2', content: 'Indemnification' },
+  { type: 'p', content: 'You agree to indemnify and hold harmless Glimvia, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:' },
+  { type: 'ul', content: [
+    'Your use of the App',
+    'Your violation of these Terms',
+    'Your violation of any rights of another party',
+    'Unauthorized access to data through your credentials',
+  ]},
+  { type: 'h2', content: 'Termination' },
+  { type: 'ul', content: [
+    'You may terminate your use of Glimvia at any time by uninstalling the App',
+    'We may suspend or terminate your access for violation of these Terms',
+    'Upon termination, cached data will be deleted according to our retention policy',
+    'Provisions regarding liability and indemnification survive termination',
+  ]},
+  { type: 'h2', content: 'Governing Law' },
+  { type: 'p', content: 'These Terms shall be interpreted and governed by the laws of the jurisdiction where Glimvia is operated, without regard to conflict of law provisions. Any disputes shall be resolved through binding arbitration or in the courts of competent jurisdiction.' },
+  { type: 'h2', content: 'Changes to Terms' },
+  { type: 'p', content: 'We reserve the right to modify these Terms at any time. We will notify users of significant changes through the App or by email. Your continued use of Glimvia after changes constitutes acceptance of the updated Terms.' },
+  { type: 'h2', content: 'Apache Superset Disclaimer' },
+  { type: 'p', content: 'Important: Glimvia is an independent application and is not affiliated with, endorsed by, or sponsored by Apache Superset or the Apache Software Foundation. Apache Superset is a trademark of the Apache Software Foundation.' },
+  { type: 'ul', content: [
+    'We provide connectivity to Apache Superset instances but do not control or maintain them',
+    'Issues with your Superset instance are outside our control and support scope',
+    'Always ensure you have proper authorization to access your organization\'s Superset data',
+  ]},
+  { type: 'h2', content: 'Contact Information' },
+  { type: 'p', content: 'Questions about these Terms should be directed to:' },
+  { type: 'contact', content: 'hello@glimvia.app' },
+  { type: 'h2', content: 'Severability' },
+  { type: 'p', content: 'If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary so that the remaining terms shall remain in full force and effect.' },
+];
+
