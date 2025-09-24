@@ -363,7 +363,7 @@ export default function Hero() {
           >
             <OsAwareBadges />
             <MotionButton asChild variant="outline" size="lg" className="h-12 border-primary/50" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link href="#">Technical Specifications</Link>
+              <Link href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" target="_blank" rel="noopener noreferrer">Technical Specifications</Link>
             </MotionButton>
           </motion.div>
           <motion.div
