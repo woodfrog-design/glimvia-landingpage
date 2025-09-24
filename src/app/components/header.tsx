@@ -13,8 +13,8 @@ import { cn } from '@/lib/utils';
 import { Logo } from './logo';
 
 const navLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Experience', href: '#experience' },
+  { name: 'About', href: '/#about' },
+  { name: 'Experience', href: '/#experience' },
   { name: 'Support', href: '/support' },
 ];
 
@@ -92,7 +92,7 @@ export default function Header() {
         </nav>
         <div className="hidden items-center gap-4 md:flex flex-1 justify-end">
           <ThemeToggle />
-          <OSAwareButton iosUrl="#" androidUrl="#" variant="shiny" size="lg">
+          <OSAwareButton iosUrl="#download" androidUrl="#download" variant="shiny" size="lg">
             <Download />
             Download
           </OSAwareButton>
@@ -143,20 +143,20 @@ export default function Header() {
                     <div className="flex flex-col items-center gap-4">
                        {detectedOS === 'ios' && (
                         <>
-                          <OSBadge os="ios" storeUrl="#" />
-                          <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on Google Play</Link>
+                          <OSBadge os="ios" storeUrl="#download" />
+                          <Link href="#download" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on Google Play</Link>
                         </>
                       )}
                       {detectedOS === 'android' && (
                         <>
-                          <OSBadge os="android" storeUrl="#" />
-                          <Link href="#" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on the App Store</Link>
+                          <OSBadge os="android" storeUrl="#download" />
+                          <Link href="#download" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on the App Store</Link>
                         </>
                       )}
                       {detectedOS === 'unknown' && (
                         <>
-                          <OSBadge os="ios" storeUrl="#" />
-                          <OSBadge os="android" storeUrl="#" />
+                          <OSBadge os="ios" storeUrl="#download" />
+                          <OSBadge os="android" storeUrl="#download" />
                         </>
                       )}
                     </div>

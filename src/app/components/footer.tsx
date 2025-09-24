@@ -12,28 +12,29 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <Logo />
-            <p className="mt-4 text-sm text-muted-foreground max-w-[120px]">
-              Your dashboards, KPIs and alerts now live in your pocket.
-            </p>
+            <div className="mt-4 text-sm text-muted-foreground max-w-[120px]">
+              <p className="font-medium text-foreground text-sm">Monitor. Explore. Act.</p>
+              <p className="text-xs mt-1">Wherever business takes you.</p>
+            </div>
           </div>
           <div>
             <h3 className="text-sm font-semibold leading-6 text-foreground">Product</h3>
             <ul role="list" className="mt-4 space-y-2">
-              <li><Link href="#features" className="text-sm text-muted-foreground hover:text-foreground">Features</Link></li>
-              <li><Link href="#experience" className="text-sm text-muted-foreground hover:text-foreground">Experience</Link></li>
-              <li><Link href="#coming-soon" className="text-sm text-muted-foreground hover:text-foreground">Roadmap</Link></li>
+             <li><Link href="/#features" className="text-sm text-muted-foreground hover:text-foreground">Features</Link></li>
+<li><Link href="/#experience" className="text-sm text-muted-foreground hover:text-foreground">Experience</Link></li>
+<li><Link href="/#coming-soon" className="text-sm text-muted-foreground hover:text-foreground">Roadmap</Link></li>
               <li>
-                <Link href="#" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
-                  Tech Specs
+                <a href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                  Technical Specifications
                   <ArrowUpRight className="h-3 w-3" />
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
           <div>
             <h3 className="text-sm font-semibold leading-6 text-foreground">Resources</h3>
             <ul role="list" className="mt-4 space-y-2">
-              <li><Link href="#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link></li>
+              <li><Link href="#/faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link></li>
               <li><Link href="/support" className="text-sm text-muted-foreground hover:text-foreground">Support</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link></li>
             </ul>
@@ -41,7 +42,7 @@ const Footer = () => {
           <div>
             <h3 className="text-sm font-semibold leading-6 text-foreground">Company</h3>
             <ul role="list" className="mt-4 space-y-2">
-              <li><Link href="#about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
+              <li><Link href="#/about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
               <li>
                 <a href="https://woodfrog.tech/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
                   Woodfrog Tech
