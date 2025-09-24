@@ -4,7 +4,7 @@ import { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle, AlertCircle, Loader2, Ticket, HelpCircle, Clock } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader2, Ticket, HelpCircle, Clock, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,8 +28,9 @@ import {
 import PageLayout from '@/app/components/page-layout';
 import { motion } from 'framer-motion';
 import { submitSupportTicket, generateTicketId, type SupportFormData } from '@/lib/firebase-forms';
+import { useRecaptcha } from '@/hooks/use-recaptcha';
 
-// Form validation schema
+// Form validation schema - keeping original validation
 const supportSchema = z.object({
   title: z
     .string()
@@ -132,6 +133,8 @@ export default function SupportPage() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitError, setSubmitError] = useState('');
   const [ticketId, setTicketId] = useState('');
+  
+  const { executeRecaptcha, isLoaded: recaptchaLoaded } = useRecaptcha();
 
   const form = useForm<SupportForm>({
     resolver: zodResolver(supportSchema),
@@ -155,10 +158,20 @@ export default function SupportPage() {
     setSubmitError('');
 
     try {
+      // Execute reCAPTCHA
+      const recaptchaToken = await executeRecaptcha('support_ticket');
+      
+      if (!recaptchaToken) {
+        throw new Error('reCAPTCHA verification failed. Please try again.');
+      }
+
       const newTicketId = generateTicketId();
       
-      // Submit to Firebase
-      const result = await submitSupportTicket(data as SupportFormData, newTicketId);
+      // Submit to Firebase with reCAPTCHA token
+      const result = await submitSupportTicket({
+        ...data,
+        recaptchaToken,
+      } as SupportFormData & { recaptchaToken: string }, newTicketId);
       
       if (result.success) {
         setTicketId(newTicketId);
@@ -465,11 +478,17 @@ export default function SupportPage() {
                     />
                   </div>
 
+                  {/* reCAPTCHA Notice */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Shield className="h-4 w-4" />
+                    <span>Protected by reCAPTCHA. Privacy Policy and Terms of Service apply.</span>
+                  </div>
+
                   {/* Submit Button */}
                   <div className="pt-4">
                     <Button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !recaptchaLoaded}
                       className="w-full sm:w-auto"
                       size="lg"
                       variant="shiny"
@@ -487,6 +506,12 @@ export default function SupportPage() {
                       )}
                     </Button>
 
+                    {!recaptchaLoaded && (
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Loading security verification...
+                      </p>
+                    )}
+
                     {submitStatus === 'error' && (
                       <div className="mt-4 flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                         <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
@@ -496,7 +521,7 @@ export default function SupportPage() {
                           </p>
                           <p className="text-sm text-red-600 dark:text-red-400 mt-1">{submitError}</p>
                           <p className="text-xs text-red-500 dark:text-red-500 mt-2">
-                            If the problem persists, please email us directly at support@glimvia.com
+                            If the problem persists, please email us directly at support@glimvia.app
                           </p>
                         </div>
                       </div>

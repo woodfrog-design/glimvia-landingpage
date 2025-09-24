@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle, AlertCircle, Loader2, Send, Mail, MessageSquare, Building } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader2, Send, Mail, MessageSquare, Building, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -25,7 +25,8 @@ import {
 } from '@/components/ui/form';
 import PageLayout from '@/app/components/page-layout';
 import { motion } from 'framer-motion';
-import { submitSupportTicket, generateTicketId, type SupportFormData } from '@/lib/firebase-forms';
+import { submitContactForm, type ContactFormData } from '@/lib/firebase-forms';
+import { useRecaptcha } from '@/hooks/use-recaptcha';
 
 // Form validation schema
 const contactSchema = z.object({
@@ -78,6 +79,8 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [submitError, setSubmitError] = useState('');
+  
+  const { executeRecaptcha, isLoaded: recaptchaLoaded } = useRecaptcha();
 
   const form = useForm<ContactForm>({
     resolver: zodResolver(contactSchema),
@@ -98,8 +101,18 @@ export default function ContactPage() {
     setSubmitError('');
 
     try {
-      // Submit to Firebase
-      const result = await submitContactForm(data as ContactFormData);
+      // Execute reCAPTCHA
+      const recaptchaToken = await executeRecaptcha('contact_form');
+      
+      if (!recaptchaToken) {
+        throw new Error('reCAPTCHA verification failed. Please try again.');
+      }
+
+      // Submit to Firebase with reCAPTCHA token
+      const result = await submitContactForm({
+        ...data,
+        recaptchaToken,
+      } as ContactFormData & { recaptchaToken: string });
       
       if (result.success) {
         setSubmitStatus('success');
@@ -110,7 +123,7 @@ export default function ContactPage() {
           setSubmitStatus('idle');
         }, 5000);
         
-        // Google Analytics event (placeholder)
+        // Google Analytics event
         if (typeof window !== 'undefined' && (window as any).gtag) {
           (window as any).gtag('event', 'generate_lead', {
             form_name: 'contact',
@@ -317,11 +330,17 @@ export default function ContactPage() {
                     )}
                   />
 
+                  {/* reCAPTCHA Notice */}
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Shield className="h-4 w-4" />
+                    <span>Protected by reCAPTCHA. Privacy Policy and Terms of Service apply.</span>
+                  </div>
+
                   {/* Submit Button */}
                   <div className="pt-4">
                     <Button
                       type="submit"
-                      disabled={isSubmitting}
+                      disabled={isSubmitting || !recaptchaLoaded}
                       className="w-full sm:w-auto"
                       size="lg"
                       variant="shiny"
@@ -339,6 +358,12 @@ export default function ContactPage() {
                       )}
                     </Button>
 
+                    {!recaptchaLoaded && (
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Loading security verification...
+                      </p>
+                    )}
+
                     {submitStatus === 'error' && (
                       <div className="mt-4 flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                         <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
@@ -348,7 +373,7 @@ export default function ContactPage() {
                           </p>
                           <p className="text-sm text-red-600 dark:text-red-400 mt-1">{submitError}</p>
                           <p className="text-xs text-red-500 dark:text-red-500 mt-2">
-                            If the problem persists, please email us directly at hello@glimvia.com
+                            If the problem persists, please email us directly at hello@glimvia.app
                           </p>
                         </div>
                       </div>
