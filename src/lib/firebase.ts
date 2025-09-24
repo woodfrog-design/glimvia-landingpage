@@ -1,40 +1,29 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 
+// Your web app's Firebase configuration
+// These values are now being pulled from environment variables
 const firebaseConfig = {
-  apiKey: "AIzaSyD_4K4fPdHncN1LnkdhnCBLqE44GH-HwIo",
-  authDomain: "glimvia-wb.firebaseapp.com",
-  projectId: "glimvia-wb",
-  storageBucket: "glimvia-wb.firebasestorage.app",
-  messagingSenderId: "107256681073",
-  appId: "1:107256681073:web:57715a526ac96cd8056056",
-  measurementId: "G-RG4BZEQ11Y"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// We check if apps are already initialized to prevent errors during hot-reloads in development.
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
 // Initialize Firestore
 export const db = getFirestore(app);
 
-// Initialize Analytics (only in browser)
-export const analytics = null;
+// Initialize Analytics (only in the browser)
+export const analytics = typeof window !== 'undefined' 
+  ? isSupported().then(yes => yes ? getAnalytics(app) : null)
+  : null;
 
 export default app;
-
-// Temporary test - remove after testing
-export const testFirebaseConnection = async () => {
-  try {
-    const { collection, addDoc } = await import('firebase/firestore');
-    const testDoc = await addDoc(collection(db, 'test'), {
-      message: 'Firebase connection working',
-      timestamp: new Date()
-    });
-    console.log('Firebase test successful:', testDoc.id);
-    return true;
-  } catch (error) {
-    console.error('Firebase test failed:', error);
-    return false;
-  }
-};

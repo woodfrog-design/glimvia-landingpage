@@ -92,7 +92,7 @@ export default function Header() {
         </nav>
         <div className="hidden items-center gap-4 md:flex flex-1 justify-end">
           <ThemeToggle />
-          <OSAwareButton iosUrl="#download" androidUrl="#download" variant="shiny" size="lg">
+          <OSAwareButton iosUrl="/#download" androidUrl="/#download" variant="shiny" size="lg">
             <Download />
             Download
           </OSAwareButton>

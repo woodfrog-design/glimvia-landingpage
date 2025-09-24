@@ -34,7 +34,7 @@ const Footer = () => {
           <div>
             <h3 className="text-sm font-semibold leading-6 text-foreground">Resources</h3>
             <ul role="list" className="mt-4 space-y-2">
-              <li><Link href="#/faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link></li>
+              <li><Link href="/#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link></li>
               <li><Link href="/support" className="text-sm text-muted-foreground hover:text-foreground">Support</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link></li>
             </ul>
@@ -42,7 +42,7 @@ const Footer = () => {
           <div>
             <h3 className="text-sm font-semibold leading-6 text-foreground">Company</h3>
             <ul role="list" className="mt-4 space-y-2">
-              <li><Link href="#/about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
+              <li><Link href="/#about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
               <li>
                 <a href="https://woodfrog.tech/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
                   Woodfrog Tech
