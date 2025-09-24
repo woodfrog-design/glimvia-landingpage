@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import PageLayout from '@/app/components/page-layout';
 import { motion } from 'framer-motion';
+import { submitSupportTicket, generateTicketId, type SupportFormData } from '@/lib/firebase-forms';
 
 // Form validation schema
 const contactSchema = z.object({
@@ -97,27 +98,25 @@ export default function ContactPage() {
     setSubmitError('');
 
     try {
-      // TODO: Replace with actual Firebase submission
-      console.log('Contact form submitted:', data);
+      // Submit to Firebase
+      const result = await submitContactForm(data as ContactFormData);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate success
-      setSubmitStatus('success');
-      
-      // Reset form after delay
-      setTimeout(() => {
-        form.reset();
-        setSubmitStatus('idle');
-      }, 5000);
-      
-      // Google Analytics event (placeholder)
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'generate_lead', {
-          form_name: 'contact',
-          method: 'form_submission',
-        });
+      if (result.success) {
+        setSubmitStatus('success');
+        
+        // Reset form after delay
+        setTimeout(() => {
+          form.reset();
+          setSubmitStatus('idle');
+        }, 5000);
+        
+        // Google Analytics event (placeholder)
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'generate_lead', {
+            form_name: 'contact',
+            method: 'form_submission',
+          });
+        }
       }
     } catch (error: any) {
       console.error('Contact form submission error:', error);

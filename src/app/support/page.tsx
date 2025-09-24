@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/form';
 import PageLayout from '@/app/components/page-layout';
 import { motion } from 'framer-motion';
+import { submitSupportTicket, generateTicketId, type SupportFormData } from '@/lib/firebase-forms';
 
 // Form validation schema
 const supportSchema = z.object({
@@ -148,12 +149,6 @@ export default function SupportPage() {
     },
   });
 
-  const generateTicketId = useCallback((): string => {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 5).toUpperCase();
-    return `GLM-${timestamp}-${random}`;
-  }, []);
-
   const onSubmit = async (data: SupportForm) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
@@ -162,29 +157,27 @@ export default function SupportPage() {
     try {
       const newTicketId = generateTicketId();
       
-      // TODO: Replace with actual Firebase submission
-      console.log('Support ticket submitted:', { ...data, ticketId: newTicketId });
+      // Submit to Firebase
+      const result = await submitSupportTicket(data as SupportFormData, newTicketId);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulate success
-      setTicketId(newTicketId);
-      setSubmitStatus('success');
-      
-      // Reset form after delay
-      setTimeout(() => {
-        form.reset();
-        setSubmitStatus('idle');
-        setTicketId('');
-      }, 5000);
-      
-      // Google Analytics event (placeholder)
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'generate_lead', {
-          form_name: 'support',
-          method: 'form_submission',
-        });
+      if (result.success) {
+        setTicketId(newTicketId);
+        setSubmitStatus('success');
+        
+        // Reset form after delay
+        setTimeout(() => {
+          form.reset();
+          setSubmitStatus('idle');
+          setTicketId('');
+        }, 5000);
+        
+        // Google Analytics event
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'generate_lead', {
+            form_name: 'support',
+            method: 'form_submission',
+          });
+        }
       }
     } catch (error: any) {
       console.error('Support ticket submission error:', error);
