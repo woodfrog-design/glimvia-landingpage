@@ -1,5 +1,5 @@
 import { AnimatedSection } from "../animated-section";
-import { OsAwareBadges } from "../os-aware-badges"; // Import the new component
+import { OSAwareDownloadBadges } from "../os-aware-download-badges";
 
 export default function Download() {
   return (
@@ -15,8 +15,14 @@ export default function Download() {
                 <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-muted-foreground">
                     Start exploring your data on the go. Glimvia is always free for core features and ready to use instantly.
                 </p>
-                <div className="mt-10 flex items-center justify-center gap-x-6">
-                    <OsAwareBadges />
+                
+                <div className="mt-10">
+                    <OSAwareDownloadBadges 
+                        showComingSoon={true}
+                        disabled={true}
+                        iosHref="#"
+                        androidHref="#"
+                    />
                 </div>
             </div>
         </div>
