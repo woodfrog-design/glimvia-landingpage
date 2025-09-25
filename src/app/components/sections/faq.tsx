@@ -12,6 +12,28 @@ const faqItems = [
         answer: "Glimvia is an independent, mobile-first client for Apache Superset. It allows you to access your dashboards, charts, and data insights from your phone, with an interface optimized for mobile devices."
     },
     {
+        question: "Is Glimvia open source like Apache Superset?",
+        answer: "Glimvia is a closed-source application. While it is built to connect to the open-source Apache Superset platform, Glimvia itself is a proprietary product developed and maintained by Woodfrog Design. This allows us to offer a dedicated mobile experience and support for our users."
+    },
+    {
+        question: "How can I be sure my data is safe if the app isn’t open source?",
+        answer: (<span>We take data security very seriously. Your credentials are encrypted and stored only on your device, never on our servers. The app communicates directly with your Superset instance, and we do not collect or store any of your dashboard data. You can find more details in our <a href='/privacy' className='text-primary underline'>Privacy Policy</a>.</span>)
+    },
+    {
+        question: "What specific data does Glimvia access, and where is it stored?",
+        answer: (
+            <div className="space-y-2">
+                <p>Glimvia is designed to access only the information necessary to provide you with a seamless mobile experience. Here's a breakdown:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                    <li><strong>What we access:</strong> The app accesses your Superset instance URL and your username to authenticate you. It then fetches the dashboard and chart data that you have permission to view.</li>
+                    <li><strong>Where it's stored:</strong> All of this information is stored locally and securely on your device. We use industry-standard encryption to protect your information, and the dashboard data is cached on your device for faster loading times and offline access.</li>
+                    <li><strong>What we don't do:</strong> We do not store your password, or any of your dashboard data on our servers. We do not track your usage of specific dashboards or charts. The only data we collect is anonymous crash reports and usage analytics, which help us improve the app.</li>
+                </ul>
+                <p>We believe this approach provides the best balance of performance, convenience, and security.</p>
+            </div>
+        )
+    },
+    {
         question: "I cannot log in. What should I do?",
         answer: "Please ensure your Superset instance URL is correct, including 'http://' or 'https://'. Double-check your username and password. If your instance uses SSO (like Google or Okta), that is not yet supported."
     },
