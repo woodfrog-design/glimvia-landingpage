@@ -15,7 +15,7 @@ import { Logo } from './logo';
 const navLinks = [
   { name: 'About', href: '/#about' },
   { name: 'Experience', href: '/#experience' },
-  { name: 'Support', href: '/support' },
+  { name: 'Support', href: '/support-ticket' },
 ];
 
 // Helper function to get the mobile OS

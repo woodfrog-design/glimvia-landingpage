@@ -35,7 +35,7 @@ const Footer = () => {
             <h3 className="text-sm font-semibold leading-6 text-foreground">Resources</h3>
             <ul role="list" className="mt-4 space-y-2">
               <li><Link href="/#faq" className="text-sm text-muted-foreground hover:text-foreground">FAQ</Link></li>
-              <li><Link href="/support" className="text-sm text-muted-foreground hover:text-foreground">Support</Link></li>
+              <li><Link href="/support-ticket" className="text-sm text-muted-foreground hover:text-foreground">Support</Link></li>
               <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link></li>
             </ul>
           </div>
@@ -89,8 +89,8 @@ const Footer = () => {
             Crafted with <span className="text-gray-400 group-hover:text-red-500 group-hover:scale-125 transition-all">❤️</span> by team Woodfrog
           </a>
           <div className="flex space-x-4">
-            <Link href="/privacy" className="text-xs text-muted-foreground hover:text-foreground">Privacy Notice</Link>
-            <Link href="/terms" className="text-xs text-muted-foreground hover:text-foreground">Terms & Conditions</Link>
+            <Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-foreground">Privacy Notice</Link>
+            <Link href="/terms-and-conditions" className="text-xs text-muted-foreground hover:text-foreground">Terms & Conditions</Link>
           </div>
         </div>
       </div>

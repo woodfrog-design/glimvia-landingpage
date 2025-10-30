@@ -229,11 +229,11 @@ export function CookieConsent() {
                 
                 <div className="text-xs text-muted-foreground">
                   Read our{' '}
-                  <a href="/privacy" className="underline hover:text-foreground">
+                  <a href="/privacy-policy" className="underline hover:text-foreground">
                     Privacy Policy
                   </a>{' '}
                   and{' '}
-                  <a href="/terms" className="underline hover:text-foreground">
+                  <a href="/terms-and-conditions" className="underline hover:text-foreground">
                     Terms & Conditions
                   </a>
                 </div>

@@ -17,7 +17,7 @@ const faqItems = [
     },
     {
         question: "How can I be sure my data is safe if the app isn’t open source?",
-        answer: (<span>We take data security very seriously. Your credentials are encrypted and stored only on your device, never on our servers. The app communicates directly with your Superset instance, and we do not collect or store any of your dashboard data. You can find more details in our <a href='/privacy' className='text-primary underline'>Privacy Policy</a>.</span>)
+        answer: (<span>We take data security very seriously. Your credentials are encrypted and stored only on your device, never on our servers. The app communicates directly with your Superset instance, and we do not collect or store any of your dashboard data. You can find more details in our <a href='/privacy-policy' className='text-primary underline'>Privacy Policy</a>.</span>)
     },
     {
         question: "What specific data does Glimvia access, and where is it stored?",
