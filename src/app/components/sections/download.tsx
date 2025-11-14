@@ -18,10 +18,8 @@ export default function Download() {
                 
                 <div className="mt-10">
                     <OSAwareDownloadBadges 
-                        showComingSoon={true}
-                        disabled={true}
-                        iosHref="#"
-                        androidHref="#"
+                        iosHref="#download"
+                        androidHref="https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share"
                     />
                 </div>
             </div>

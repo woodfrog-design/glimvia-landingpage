@@ -7,10 +7,11 @@ import { motion } from 'framer-motion';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './theme-toggle';
-import { OSBadge, OSAwareButton } from './os-badge';
+import { OSAwareButton } from './os-badge'; // Removed OSBadge
 import { VisuallyHidden } from '@/components/ui/visually-hidden';
 import { cn } from '@/lib/utils';
 import { Logo } from './logo';
+import { AppleStoreBadge, GooglePlayBadge } from './exact-badges'; // <-- Import new badges
 
 const navLinks = [
   { name: 'About', href: '/#about' },
@@ -56,6 +57,9 @@ export default function Header() {
   const scrollDirection = useScrollDirection();
   const [detectedOS, setDetectedOS] = useState<'ios' | 'android' | 'unknown'>('unknown');
 
+  const liveAndroidUrl = "https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share";
+  const comingSoonIosUrl = "#download";
+
   useEffect(() => {
     setDetectedOS(getMobileOS());
     const handleScroll = () => {
@@ -92,7 +96,12 @@ export default function Header() {
         </nav>
         <div className="hidden items-center gap-4 md:flex flex-1 justify-end">
           <ThemeToggle />
-          <OSAwareButton iosUrl="/#download" androidUrl="/#download" variant="shiny" size="lg">
+          <OSAwareButton 
+            iosUrl={comingSoonIosUrl} 
+            androidUrl={liveAndroidUrl} 
+            variant="shiny" 
+            size="lg"
+          >
             <Download />
             Download
           </OSAwareButton>
@@ -140,26 +149,45 @@ export default function Header() {
                     className="flex flex-col items-center gap-8 mt-12"
                   >
                     <ThemeToggle />
+                    
+                    {/* === UPDATED DEVICE-AWARE BADGE LOGIC === */}
                     <div className="flex flex-col items-center gap-4">
-                       {detectedOS === 'ios' && (
-                        <>
-                          <OSBadge os="ios" storeUrl="#download" />
-                          <Link href="#download" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on Google Play</Link>
-                        </>
+                      {detectedOS === 'ios' && (
+                        <div className="flex flex-col items-center gap-3">
+                          <AppleStoreBadge href={comingSoonIosUrl} disabled={true} />
+                          <p className="text-sm text-muted-foreground">
+                            Coming soon to the App Store
+                          </p>
+                          <Link href={liveAndroidUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <strong>Now available on Google Play</strong>
+                          </Link>
+                        </div>
                       )}
+                      
                       {detectedOS === 'android' && (
-                        <>
-                          <OSBadge os="android" storeUrl="#download" />
-                          <Link href="#download" className="text-xs text-muted-foreground hover:text-primary transition-colors">Also available on the App Store</Link>
-                        </>
+                        <div className="flex flex-col items-center gap-3">
+                          <GooglePlayBadge href={liveAndroidUrl} disabled={false} />
+                          <p className="text-sm text-muted-foreground">
+                            <strong>Now available on Google Play</strong>
+                          </p>
+                          <Link href={comingSoonIosUrl} className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                            Coming soon to the App Store
+                          </Link>
+                        </div>
                       )}
+
                       {detectedOS === 'unknown' && (
-                        <>
-                          <OSBadge os="ios" storeUrl="#download" />
-                          <OSBadge os="android" storeUrl="#download" />
-                        </>
+                        <div className="flex flex-col items-center gap-3">
+                          <AppleStoreBadge href={comingSoonIosUrl} disabled={true} />
+                          <GooglePlayBadge href={liveAndroidUrl} disabled={false} />
+                          <p className="text-sm text-muted-foreground text-center">
+                            <strong>Now on Google Play</strong> / Coming soon to iOS
+                          </p>
+                        </div>
                       )}
                     </div>
+                    {/* ======================================= */}
+                    
                   </motion.div>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import './globals.css';
 import { ThemeProvider } from '@/app/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { CookieConsent } from '@/app/components/cookie-consent';
+import { LaunchBanner } from '@/app/components/launch-banner'; // <-- 1. Import new component
 
 export const metadata: Metadata = {
   title: 'Glimvia - Apache Superset on Mobile',
@@ -112,6 +113,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <LaunchBanner /> {/* <-- 2. Add the banner here */}
           {children}
           <Toaster />
           <CookieConsent />

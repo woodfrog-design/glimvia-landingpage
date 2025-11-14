@@ -24,7 +24,12 @@ const Footer = () => {
 <li><Link href="/#experience" className="text-sm text-muted-foreground hover:text-foreground">Experience</Link></li>
 <li><Link href="/#coming-soon" className="text-sm text-muted-foreground hover:text-foreground">Roadmap</Link></li>
               <li>
-                <a href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+                <a 
+                  href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+                >
                   Technical Specifications
                   <ArrowUpRight className="h-3 w-3" />
                 </a>

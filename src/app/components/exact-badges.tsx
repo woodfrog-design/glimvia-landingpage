@@ -11,10 +11,10 @@ type BadgeProps = {
   className?: string;
   children: React.ReactNode;
   disabled?: boolean;
-};
+} & Omit<React.ComponentPropsWithoutRef<typeof Link>, 'href'>;
 
 // Base badge component with theme awareness and glow effects
-function BaseBadge({ href, className, children, disabled = false }: BadgeProps) {
+function BaseBadge({ href, className, children, disabled = false, ...props }: BadgeProps) {
   const [isPressed, setIsPressed] = useState(false);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -48,6 +48,7 @@ function BaseBadge({ href, className, children, disabled = false }: BadgeProps) 
           disabled && "opacity-70 cursor-not-allowed",
           className
         )}
+        {...props}
       >
         {/* Subtle gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-teal/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -117,6 +118,8 @@ export function TechSpecsBadge({ href = "#" }: { href?: string }) {
     <BaseBadge 
       href={href}
       className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 hover:shadow-[0_0_30px_rgba(107,114,128,0.3)]"
+      target="_blank"
+      rel="noopener noreferrer"
     >
       <FileText className="w-6 h-6 flex-shrink-0" />
       <div className="text-left">
@@ -129,11 +132,11 @@ export function TechSpecsBadge({ href = "#" }: { href?: string }) {
 
 // Container component with "Coming Soon" text
 export function DownloadBadges({ 
-  showComingSoon = true,
+  showComingSoon = false,
   iosHref = "#",
   androidHref = "#",
   techSpecsHref = "#",
-  disabled = true
+  disabled = false
 }: {
   showComingSoon?: boolean;
   iosHref?: string;
@@ -165,8 +168,8 @@ export function DownloadBadges({
 
 // Alternative: Compact horizontal layout for mobile
 export function DownloadBadgesCompact({ 
-  showComingSoon = true,
-  disabled = true 
+  showComingSoon = false,
+  disabled = false 
 }: {
   showComingSoon?: boolean;
   disabled?: boolean;
