@@ -180,7 +180,7 @@ export function DownloadBadgesCompact({
         <AppleStoreBadge href="#" disabled={disabled} />
         <GooglePlayBadge href="#" disabled={disabled} />
       </div>
-      <TechSpecsBadge href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" />
+      <TechSpecsBadge href="https://glimvia.notion.site/" />
       
       {showComingSoon && disabled && (
         <motion.p 

@@ -18,7 +18,7 @@ export default function Download() {
                 
                 <div className="mt-10">
                     <OSAwareDownloadBadges 
-                        iosHref="#download"
+                        iosHref="https://apps.apple.com/us/app/id6754613388"
                         androidHref="https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share"
                     />
                 </div>

@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from "framer-motion";
 import { HeroOSAwareBadges } from "../hero-os-aware-badges";
 import { Badge } from "@/components/ui/badge";
-import { LaunchConfetti } from "../launch-confetti"; // <-- 1. Import Confetti
+import { LaunchConfetti } from "../launch-confetti";
 
 export default function Hero() {
   const { scrollY } = useScroll();
@@ -31,7 +31,7 @@ export default function Hero() {
       className="relative h-screen min-h-[700px] flex items-start justify-center overflow-hidden text-center pt-32"
       style={{ y, opacity, scale }}
     >
-      <LaunchConfetti /> {/* <-- 2. Add Confetti Component */}
+      <LaunchConfetti />
 
       <motion.div
         className="absolute inset-0 -z-20"
@@ -74,7 +74,7 @@ export default function Hero() {
                 className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/50 to-transparent bg-[length:200%_100%] animate-shine"
               />
               <span className="relative z-10">
-                We are live on the Google Play Store! 🎉
+                We are live on the Google Play Store and App Store! 🎉
               </span>
             </Badge>
           </motion.div>
@@ -100,9 +100,9 @@ export default function Hero() {
             variants={itemVariants}
           >
             <HeroOSAwareBadges 
-              iosHref="#download"
+              iosHref="https://apps.apple.com/us/app/id6754613388"
               androidHref="https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share"
-              techSpecsHref="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9"
+              techSpecsHref="https://glimvia.notion.site/"
             />
           </motion.div>
           

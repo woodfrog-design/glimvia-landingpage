@@ -7,11 +7,11 @@ import { motion } from 'framer-motion';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from './theme-toggle';
-import { OSAwareButton } from './os-badge'; // Removed OSBadge
+import { OSAwareButton } from './os-badge';
 import { VisuallyHidden } from '@/components/ui/visually-hidden';
 import { cn } from '@/lib/utils';
 import { Logo } from './logo';
-import { AppleStoreBadge, GooglePlayBadge } from './exact-badges'; // <-- Import new badges
+import { AppleStoreBadge, GooglePlayBadge } from './exact-badges';
 
 const navLinks = [
   { name: 'About', href: '/#about' },
@@ -58,7 +58,7 @@ export default function Header() {
   const [detectedOS, setDetectedOS] = useState<'ios' | 'android' | 'unknown'>('unknown');
 
   const liveAndroidUrl = "https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share";
-  const comingSoonIosUrl = "#download";
+  const liveIosUrl = "https://apps.apple.com/us/app/id6754613388";
 
   useEffect(() => {
     setDetectedOS(getMobileOS());
@@ -96,9 +96,10 @@ export default function Header() {
         </nav>
         <div className="hidden items-center gap-4 md:flex flex-1 justify-end">
           <ThemeToggle />
+          {/* Updated: Both URLs point to #download so users can choose their platform */}
           <OSAwareButton 
-            iosUrl={comingSoonIosUrl} 
-            androidUrl={liveAndroidUrl} 
+            iosUrl="#download" 
+            androidUrl="#download" 
             variant="shiny" 
             size="lg"
           >
@@ -154,12 +155,12 @@ export default function Header() {
                     <div className="flex flex-col items-center gap-4">
                       {detectedOS === 'ios' && (
                         <div className="flex flex-col items-center gap-3">
-                          <AppleStoreBadge href={comingSoonIosUrl} disabled={true} />
+                          <AppleStoreBadge href={liveIosUrl} disabled={false} />
                           <p className="text-sm text-muted-foreground">
-                            Coming soon to the App Store
+                            <strong>Now available on the App Store</strong>
                           </p>
                           <Link href={liveAndroidUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                            <strong>Now available on Google Play</strong>
+                            Also available on Google Play
                           </Link>
                         </div>
                       )}
@@ -170,18 +171,18 @@ export default function Header() {
                           <p className="text-sm text-muted-foreground">
                             <strong>Now available on Google Play</strong>
                           </p>
-                          <Link href={comingSoonIosUrl} className="text-xs text-muted-foreground hover:text-primary transition-colors">
-                            Coming soon to the App Store
+                          <Link href={liveIosUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+                            Also available on the App Store
                           </Link>
                         </div>
                       )}
 
                       {detectedOS === 'unknown' && (
                         <div className="flex flex-col items-center gap-3">
-                          <AppleStoreBadge href={comingSoonIosUrl} disabled={true} />
+                          <AppleStoreBadge href={liveIosUrl} disabled={false} />
                           <GooglePlayBadge href={liveAndroidUrl} disabled={false} />
                           <p className="text-sm text-muted-foreground text-center">
-                            <strong>Now on Google Play</strong> / Coming soon to iOS
+                            <strong>Download for iOS and Android</strong>
                           </p>
                         </div>
                       )}

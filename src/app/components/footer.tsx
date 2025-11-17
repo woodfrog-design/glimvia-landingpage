@@ -25,7 +25,7 @@ const Footer = () => {
 <li><Link href="/#coming-soon" className="text-sm text-muted-foreground hover:text-foreground">Roadmap</Link></li>
               <li>
                 <a 
-                  href="https://www.notion.so/glimvia-technical-specification-document-v1-0-2602428418a880c098e5ed4de7269ee9" 
+                  href="https://glimvia.notion.site/" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"

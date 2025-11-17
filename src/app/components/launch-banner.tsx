@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 export function LaunchBanner() {
   const [isVisible, setIsVisible] = useState(true);
   const liveAndroidUrl = "https://play.google.com/store/apps/details?id=tech.woodfrog.glimvia&pcampaignid=web_share";
+  const liveIosUrl = "https://apps.apple.com/us/app/id6754613388";
 
   if (!isVisible) {
     return null;
@@ -37,11 +38,27 @@ export function LaunchBanner() {
         <div className="relative z-10 flex items-center justify-center gap-2 sm:gap-4">
           <PartyPopper className="h-5 w-5 flex-shrink-0" />
           <span className="text-xs sm:text-sm">
-            We're live! Glimvia is now on the Google Play Store.
-            <Link 
+            We are live! Glimvia is now on the{' '}
+            <a 
+              href={liveIosUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="underline font-bold hover:opacity-80 transition-opacity"
+            >
+              App Store
+            </a>
+            {' & '}
+            <a 
               href={liveAndroidUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
+              className="underline font-bold hover:opacity-80 transition-opacity"
+            >
+              Google Play
+            </a>
+            .
+            <Link 
+              href="#download" 
               className="ml-2 whitespace-nowrap underline font-bold hover:opacity-80 transition-opacity"
             >
               Get it now!
