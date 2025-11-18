@@ -4,7 +4,7 @@
 // import { useForm } from 'react-hook-form';
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { z } from 'zod';
-// import { CheckCircle, AlertCircle, Loader2, Send, Mail, MessageSquare, Building, Shield } from 'lucide-react';
+// import { CheckCircle, AlertCircle, Loader2, Send, Mail, MessageSquare, Building } from 'lucide-react';
 // import { Button } from '@/components/ui/button';
 // import { Input } from '@/components/ui/input';
 // import { Textarea } from '@/components/ui/textarea';
@@ -26,7 +26,6 @@
 // import PageLayout from '@/app/components/page-layout';
 // import { motion } from 'framer-motion';
 // import { submitContactForm, type ContactFormData } from '@/lib/firebase-forms';
-// import { useRecaptcha } from '@/hooks/use-recaptcha';
 
 // // Form validation schema
 // const contactSchema = z.object({
@@ -79,8 +78,6 @@
 //   const [isSubmitting, setIsSubmitting] = useState(false);
 //   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 //   const [submitError, setSubmitError] = useState('');
-  
-//   const { executeRecaptcha, isLoaded: recaptchaLoaded } = useRecaptcha();
 
 //   const form = useForm<ContactForm>({
 //     resolver: zodResolver(contactSchema),
@@ -101,18 +98,7 @@
 //     setSubmitError('');
 
 //     try {
-//       // Execute reCAPTCHA
-//       const recaptchaToken = await executeRecaptcha('contact_form');
-      
-//       if (!recaptchaToken) {
-//         throw new Error('reCAPTCHA verification failed. Please try again.');
-//       }
-
-//       // Submit to Firebase with reCAPTCHA token
-//       const result = await submitContactForm({
-//         ...data,
-//         recaptchaToken,
-//       } as ContactFormData & { recaptchaToken: string });
+//       const result = await submitContactForm(data as ContactFormData);
       
 //       if (result.success) {
 //         setSubmitStatus('success');
@@ -330,17 +316,11 @@
 //                     )}
 //                   />
 
-//                   {/* reCAPTCHA Notice */}
-//                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-//                     <Shield className="h-4 w-4" />
-//                     <span>Protected by reCAPTCHA. Privacy Policy and Terms of Service apply.</span>
-//                   </div>
-
 //                   {/* Submit Button */}
 //                   <div className="pt-4">
 //                     <Button
 //                       type="submit"
-//                       disabled={isSubmitting || !recaptchaLoaded}
+//                       disabled={isSubmitting}
 //                       className="w-full sm:w-auto"
 //                       size="lg"
 //                       variant="shiny"
@@ -357,12 +337,6 @@
 //                         </>
 //                       )}
 //                     </Button>
-
-//                     {!recaptchaLoaded && (
-//                       <p className="mt-2 text-sm text-muted-foreground">
-//                         Loading security verification...
-//                       </p>
-//                     )}
 
 //                     {submitStatus === 'error' && (
 //                       <div className="mt-4 flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -489,9 +463,18 @@ export default function ContactPage() {
     setSubmitError('');
 
     try {
+      // 1. Submit to Firebase first
       const result = await submitContactForm(data as ContactFormData);
       
       if (result.success) {
+        // 2. Trigger Email Notification (Fire and forget)
+        // We don't await this because we want to show success immediately
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        }).catch(err => console.error('Failed to send notification:', err));
+
         setSubmitStatus('success');
         
         // Reset form after delay
