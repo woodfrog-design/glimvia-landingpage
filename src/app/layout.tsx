@@ -246,6 +246,7 @@ export default function RootLayout({
         </ThemeProvider>
         {/* 4. Added Google Analytics */}
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
+        <Analytics />
       </body>
     </html>
   );

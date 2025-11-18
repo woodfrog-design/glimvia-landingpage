@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { CheckCircle, AlertCircle, Loader2, Ticket, HelpCircle, Clock } from 'lucide-react';
+import { CheckCircle, AlertCircle, Loader2, Send, Ticket, HelpCircle, AlertTriangle, Server, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -25,72 +24,39 @@ import {
   FormMessage,
   FormDescription,
 } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
 import PageLayout from '@/app/components/page-layout';
 import { motion } from 'framer-motion';
 import { submitSupportTicket, generateTicketId, type SupportFormData } from '@/lib/firebase-forms';
 
-// Form validation schema - keeping original validation
-const supportSchema = z.object({
-  title: z
-    .string()
+// Regex for basic phone validation
+const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/;
+
+// Improved Validation Schema with Sanity Checks
+const ticketSchema = z.object({
+  name: z.string().trim().min(2, 'Name must be at least 2 characters'),
+  email: z.string().trim().toLowerCase().email('Please enter a valid email address'),
+  phone: z.string().trim()
+    .optional()
+    .or(z.literal(''))
+    .refine((val) => !val || phoneRegex.test(val), 'Please enter a valid phone number'),
+  organization: z.string().trim().optional(),
+  title: z.string().trim()
     .min(5, 'Title must be at least 5 characters')
-    .max(100, 'Title must be less than 100 characters'),
+    .refine(val => !/^test$/i.test(val), "Please provide a descriptive title"),
   category: z.string().min(1, 'Please select a category'),
   priority: z.string().min(1, 'Please select a priority level'),
-  description: z
-    .string()
-    .min(20, 'Please provide more details (minimum 20 characters)')
-    .max(2000, 'Description must be less than 2000 characters'),
-  name: z
-    .string()
-    .min(2, 'Name must be at least 2 characters')
-    .max(50, 'Name must be less than 50 characters')
-    .optional()
-    .or(z.literal('')),
-  email: z.string().email('Please enter a valid email address'),
-  phone: z
-    .string()
-    .optional()
-    .refine((val) => {
-      if (!val || val.trim() === '') return true;
-      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-      const cleanPhone = val.replace(/[\s\-\(\)]/g, '');
-      return phoneRegex.test(cleanPhone);
-    }, 'Please enter a valid phone number'),
-  organization: z
-    .string()
-    .max(100, 'Organization name must be less than 100 characters')
-    .optional()
-    .or(z.literal('')),
-  supersetVersion: z
-    .string()
-    .min(1, 'Superset version is required')
-    .refine(
-      (val) => /^\d+\.\d+(\.\d+)?$/.test(val.trim()),
-      'Please enter a valid version format (e.g., 3.1.0)'
-    ),
+  supersetVersion: z.string().trim().min(1, 'Please enter your Superset version'),
+  description: z.string().trim()
+    .min(20, 'Please provide more details (at least 20 characters)')
+    .refine(val => !/^asdf/i.test(val), "Please provide a valid description"),
   openForCall: z.boolean().default(false),
+  
+  // Honeypot field - used to trap bots
+  confirm_email: z.string().optional(),
 });
 
-type SupportForm = z.infer<typeof supportSchema>;
-
-const categories = [
-  { value: 'bug', label: 'Bug Report' },
-  { value: 'feature-request', label: 'Feature Request' },
-  { value: 'general', label: 'General Query' },
-  { value: 'login-issue', label: 'Login Issue' },
-  { value: 'dashboard-issue', label: 'Dashboard Issue' },
-  { value: 'performance', label: 'Performance Issue' },
-  { value: 'installation', label: 'Installation Help' },
-  { value: 'integration', label: 'Integration Support' },
-];
-
-const priorities = [
-  { value: 'low', label: 'Low - General inquiry' },
-  { value: 'medium', label: 'Medium - Standard issue' },
-  { value: 'high', label: 'High - Affects productivity' },
-  { value: 'urgent', label: 'Urgent - Critical system down' },
-];
+type TicketForm = z.infer<typeof ticketSchema>;
 
 // Success Screen Component
 function SuccessScreen({ ticketId, onReset }: { ticketId: string; onReset: () => void }) {
@@ -102,21 +68,15 @@ function SuccessScreen({ ticketId, onReset }: { ticketId: string; onReset: () =>
           animate={{ opacity: 1, scale: 1 }}
           className="max-w-md w-full text-center bg-background p-8 rounded-2xl border shadow-feature-card"
         >
-          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-            <CheckCircle className="w-8 h-8 text-white" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+            <Ticket className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold mb-3 font-headline">Ticket Submitted Successfully!</h1>
-          <div className="mb-4">
-            <p className="text-lg font-medium text-green-700 dark:text-green-400">
-              Ticket ID: {ticketId}
-            </p>
-            <p className="text-sm text-muted-foreground mt-1">
-              Please save this ID for future reference
-            </p>
+          <h1 className="text-2xl font-bold mb-2 font-headline">Ticket Submitted!</h1>
+          <div className="bg-muted/50 p-3 rounded-lg mb-4 inline-block">
+            <p className="text-sm font-mono text-foreground">ID: {ticketId}</p>
           </div>
           <p className="text-muted-foreground mb-6">
-            We've received your support request and will get back to you within 24-48 hours. 
-            You'll receive email updates at the provided address.
+            We have received your support request. Our engineering team will review it and get back to you shortly via email.
           </p>
           <Button onClick={onReset} className="w-full" variant="default">
             Submit Another Ticket
@@ -130,56 +90,71 @@ function SuccessScreen({ ticketId, onReset }: { ticketId: string; onReset: () =>
 export default function SupportPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [createdTicketId, setCreatedTicketId] = useState('');
   const [submitError, setSubmitError] = useState('');
-  const [ticketId, setTicketId] = useState('');
 
-  const form = useForm<SupportForm>({
-    resolver: zodResolver(supportSchema),
+  const form = useForm<TicketForm>({
+    resolver: zodResolver(ticketSchema),
     defaultValues: {
-      title: '',
-      category: '',
-      priority: '',
-      description: '',
       name: '',
       email: '',
       phone: '',
       organization: '',
+      title: '',
+      category: '',
+      priority: 'medium',
       supersetVersion: '',
+      description: '',
       openForCall: false,
+      confirm_email: '', // Honeypot init
     },
   });
 
-  const onSubmit = async (data: SupportForm) => {
+  const onSubmit = async (data: TicketForm) => {
+    // 1. Honeypot check: If filled, it's a bot
+    if (data.confirm_email) {
+      console.log('Bot detected via honeypot');
+      setSubmitStatus('success'); // Fake success to confuse bot
+      setCreatedTicketId('SPAM-FILTERED');
+      return;
+    }
+
     setIsSubmitting(true);
     setSubmitStatus('idle');
     setSubmitError('');
 
+    const ticketId = generateTicketId();
+
     try {
-      const newTicketId = generateTicketId();
-      
-      const result = await submitSupportTicket(data as SupportFormData, newTicketId);
+      // Remove honeypot before sending
+      const { confirm_email, ...cleanData } = data;
+
+      // 1. Submit to Firebase
+      const result = await submitSupportTicket(cleanData as SupportFormData, ticketId);
       
       if (result.success) {
-        setTicketId(newTicketId);
+        // 2. Trigger Email Notification
+        fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...cleanData, ticketId }),
+        }).catch(err => console.error('Failed to send notification:', err));
+
+        setCreatedTicketId(ticketId);
         setSubmitStatus('success');
+        form.reset();
         
-        // Reset form after delay
-        setTimeout(() => {
-          form.reset();
-          setSubmitStatus('idle');
-          setTicketId('');
-        }, 5000);
-        
-        // Google Analytics event
+        // 3. Google Analytics
         if (typeof window !== 'undefined' && (window as any).gtag) {
-          (window as any).gtag('event', 'generate_lead', {
-            form_name: 'support',
-            method: 'form_submission',
+          (window as any).gtag('event', 'submit_ticket', {
+            event_category: 'support',
+            event_label: data.category,
+            ticket_id: ticketId
           });
         }
       }
     } catch (error: any) {
-      console.error('Support ticket submission error:', error);
+      console.error('Ticket submission error:', error);
       setSubmitStatus('error');
       setSubmitError(error?.message || 'Something went wrong. Please try again.');
     } finally {
@@ -187,16 +162,13 @@ export default function SupportPage() {
     }
   };
 
-  const watchedPriority = form.watch('priority');
-
-  // Success screen
   if (submitStatus === 'success') {
     return (
       <SuccessScreen 
-        ticketId={ticketId} 
+        ticketId={createdTicketId}
         onReset={() => {
           setSubmitStatus('idle');
-          setTicketId('');
+          setCreatedTicketId('');
         }} 
       />
     );
@@ -205,306 +177,259 @@ export default function SupportPage() {
   return (
     <PageLayout 
       title="Support Center"
-      description="Submit a detailed support request. Our team typically responds within 24-48 hours."
+      description="Experiencing issues or have technical questions? Our engineering team is ready to help you get back on track."
     >
-      <div className="mx-auto max-w-2xl lg:max-w-none">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Support Info */}
-          <div className="lg:col-span-1">
-            <div className="space-y-8">
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Clock className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Response Time</h3>
-                  <p className="text-muted-foreground">24-48 hours</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Urgent tickets get priority
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <HelpCircle className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Support Hours</h3>
-                  <p className="text-muted-foreground">24/7 via ticket system</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Phone calls for urgent issues only
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <Ticket className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold">Ticket Tracking</h3>
-                  <p className="text-muted-foreground">Email notifications</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    You'll receive a unique ticket ID
-                  </p>
-                </div>
-              </div>
-            </div>
+      <div className="mx-auto max-w-3xl">
+        <div className="bg-background p-6 sm:p-8 rounded-2xl border shadow-feature-card">
+          <div className="flex items-center gap-3 mb-8 pb-6 border-b">
+            <AlertTriangle className="w-5 h-5 text-primary" />
+            <p className="text-sm text-muted-foreground">
+              Please provide as much detail as possible to help us resolve your issue faster.
+            </p>
           </div>
 
-          {/* Support Form */}
-          <div className="lg:col-span-2">
-            <div className="bg-background p-6 rounded-2xl border shadow-feature-card">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  {/* Ticket Title */}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              
+              {/* HONEYPOT FIELD (Hidden) */}
+              <div className="hidden" aria-hidden="true">
+                <Input 
+                  tabIndex={-1}
+                  autoComplete="off"
+                  {...form.register("confirm_email")} 
+                  placeholder="Do not fill this out"
+                />
+              </div>
+
+              {/* Personal Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" /> Contact Information
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="title"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ticket Title / Subject *</FormLabel>
+                        <FormLabel>Full Name *</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Brief summary of the issue (5-100 characters)"
-                            maxLength={100}
-                            {...field}
-                          />
+                          <Input placeholder="John Doe" {...field} />
                         </FormControl>
                         <FormMessage />
-                        <div className="text-xs text-muted-foreground text-right">
-                          {field.value?.length || 0}/100 characters
-                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Work Email *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="john@company.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="organization"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Organization</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Company Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone Number</FormLabel>
+                        <FormControl>
+                          <Input type="tel" placeholder="+1 (555) 000-0000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Technical Details */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <Server className="w-4 h-4" /> Issue Details
+                </h3>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="connection">Connection Issue</SelectItem>
+                            <SelectItem value="bug">Bug Report</SelectItem>
+                            <SelectItem value="feature">Feature Request</SelectItem>
+                            <SelectItem value="account">Account/Billing</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
 
-                  {/* Category & Priority */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Category / Issue Type *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select category" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {categories.map((category) => (
-                                <SelectItem key={category.value} value={category.value}>
-                                  {category.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="priority"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Priority Level *</FormLabel>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select priority" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              {priorities.map((priority) => (
-                                <SelectItem key={priority.value} value={priority.value}>
-                                  {priority.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Issue Description */}
                   <FormField
                     control={form.control}
-                    name="description"
+                    name="priority"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Issue Description *</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Please provide detailed information about the issue:&#10;- What were you trying to do?&#10;- What happened instead?&#10;- What did you expect to happen?&#10;- Steps to reproduce (if applicable)"
-                            rows={8}
-                            maxLength={2000}
-                            {...field}
-                          />
-                        </FormControl>
+                        <FormLabel>Priority *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select priority" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="low">Low - General Question</SelectItem>
+                            <SelectItem value="medium">Medium - Minor Issue</SelectItem>
+                            <SelectItem value="high">High - Major Feature Broken</SelectItem>
+                            <SelectItem value="critical">Critical - App Crashing</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
-                        <div className="text-xs text-muted-foreground text-right">
-                          {field.value?.length || 0}/2000 characters
-                        </div>
                       </FormItem>
                     )}
                   />
+                </div>
 
-                  {/* Contact Information */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your full name" maxLength={50} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="supersetVersion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Superset Version *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., v3.1.0 or SaaS" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        The version of Apache Superset you are connecting to.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
-                          <FormControl>
-                            <Input type="email" placeholder="your.email@example.com" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Subject *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Brief summary of the issue" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description *</FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          placeholder="Please describe the issue in detail. Steps to reproduce, expected behavior, etc." 
+                          className="min-h-[150px]"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="openForCall"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base flex items-center gap-2">
+                        <Smartphone className="w-4 h-4" />
+                        Open for a call?
+                      </FormLabel>
+                      <FormDescription>
+                        Can our engineering team contact you for a quick debug session if needed?
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full"
+                  size="lg"
+                  variant="shiny"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin mr-2" />
+                      Submitting Ticket...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-5 h-5 mr-2" />
+                      Submit Ticket
+                    </>
+                  )}
+                </Button>
+
+                {submitStatus === 'error' && (
+                  <div className="mt-4 flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-red-700 dark:text-red-300">
+                        Submission Failed
+                      </p>
+                      <p className="text-sm text-red-600 dark:text-red-400 mt-1">{submitError}</p>
+                    </div>
                   </div>
+                )}
+              </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
-                            Phone Number {watchedPriority === 'urgent' && '*'}
-                          </FormLabel>
-                          <FormControl>
-                            <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                          {watchedPriority === 'urgent' && (
-                            <FormDescription>
-                              Phone number is required for urgent tickets
-                            </FormDescription>
-                          )}
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="organization"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Organization</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your company or organization" maxLength={100} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Technical Information */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                    <FormField
-                      control={form.control}
-                      name="supersetVersion"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Apache Superset Version *</FormLabel>
-                          <FormControl>
-                            <Input placeholder="e.g., 3.1.0" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                          <FormDescription>
-                            You can find this in your Superset instance settings
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="openForCall"
-                      render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 p-2">
-                          <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="text-sm font-medium">
-                              Available for phone call?
-                            </FormLabel>
-                            <FormDescription>
-                              For urgent issues only
-                            </FormDescription>
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-4">
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full sm:w-auto"
-                      size="lg"
-                      variant="shiny"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin mr-2" />
-                          Creating Ticket...
-                        </>
-                      ) : (
-                        <>
-                          <Ticket className="w-5 h-5 mr-2" />
-                          Submit Support Ticket
-                        </>
-                      )}
-                    </Button>
-
-                    {submitStatus === 'error' && (
-                      <div className="mt-4 flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                        <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-sm font-medium text-red-700 dark:text-red-300">
-                            Submission Failed
-                          </p>
-                          <p className="text-sm text-red-600 dark:text-red-400 mt-1">{submitError}</p>
-                          <p className="text-xs text-red-500 dark:text-red-500 mt-2">
-                            If the problem persists, please email us directly at support@glimvia.app
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </form>
-              </Form>
-            </div>
-          </div>
+            </form>
+          </Form>
         </div>
       </div>
     </PageLayout>
