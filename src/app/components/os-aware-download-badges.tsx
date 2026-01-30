@@ -7,6 +7,7 @@ import { AppleStoreBadge, GooglePlayBadge } from "./exact-badges";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { gaEvent } from "@/lib/ga";
 
+
 type OS = "ios" | "android" | "unknown";
 
 function getMobileOS(): OS {
